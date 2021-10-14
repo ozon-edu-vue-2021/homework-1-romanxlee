@@ -14,8 +14,20 @@
     <section class="app vue-app">
         <h1>VUE</h1>
         <h2>How much will?</h2>
-        <p>{{counter}} + {{step}}</p>
-        <p><strong>Result: {{sum}}</strong></p>
+        <div style="display: flex; gap: 50px;">
+            <div>
+                <p>{{counter}} + {{step}}</p>
+                <p><strong>Result: {{sum}}</strong></p>
+            </div>
+            <div>
+                <p>{{counter}} - {{step}}</p>
+                <p><strong>Result: {{substract}}</strong></p>
+            </div>
+            <div>
+                <p>{{counter}} * {{step}}</p>
+                <p><strong>Result: {{multiply}}</strong></p>
+            </div>
+        </div>
         <div class="math">
             Counter:
             <button class="button minus" v-on:click="decrementCounterHandler">-1</button>
@@ -23,25 +35,37 @@
         </div>
         <div class="math">
             Step:
-            <button class="button minus">-2</button>
-            <button class="button plus">+2</button>
+            <button class="button minus" @click="decrementStepHandler">-2</button>
+            <button class="button plus" @click="incrementStepHandler">+2</button>
         </div>
     </section>
     <hr>
     <section class="app js-app">
         <h1>JS</h1>
-        <h2>How much will!</h2>
-        <p><span class="counter"></span> + <span class="step"></span></p>
-        <p><strong>Result: <span class="sum"></span></strong></p>
+        <h2>How much will?</h2>
+        <div style="display: flex; gap: 50px;">
+            <div>
+                <p><span class="counter"></span> + <span class="step"></span></p>
+                <p><strong>Result: <span class="sum"></span></strong></p>
+            </div>
+            <div>
+                <p><span class="counter"></span> - <span class="step"></span></p>
+                <p><strong>Result: <span class="substract"></span></strong></p>
+            </div>
+            <div>
+                <p><span class="counter"></span> * <span class="step"></span></p>
+                <p><strong>Result: <span class="multiply"></span></strong></p>
+            </div>
+        </div>
         <div class="math">
             Counter:
-            <button class="button minus">-1</button>
-            <button class="button plus">+1</button>
+            <button class="button minus-counter">-1</button>
+            <button class="button plus-counter">+1</button>
         </div>
         <div class="math">
             Step:
-            <button class="button minus">-2</button>
-            <button class="button plus">+2</button>
+            <button class="button minus-step">-2</button>
+            <button class="button plus-step">+2</button>
         </div>
     </section>
     <script>
@@ -52,40 +76,82 @@
                 step: 2
             },
             methods: {
-                incrementCounterHandler() {},
-                decrementCounterHandler() {}
-                //...
+                incrementCounterHandler() {
+                    this.counter += 1
+                },
+                decrementCounterHandler() {
+                    this.counter -= 1
+                },
+                incrementStepHandler() {
+                    this.step += 2
+                },
+                decrementStepHandler() {
+                    this.step -= 2
+                },
             },
             computed: {
-                sum() {}
+                sum() {
+                    return this.counter + this.step
+                },
+                substract() {
+                    return this.counter - this.step
+                },
+                multiply() {
+                    return this.counter * this.step
+                },
             }
         })
     </script>
     <script>
-        const counterEl = document.querySelector('.js-app .counter');
-        const buttonElMinus = document.querySelector('.js-app .minus');
-        const buttonElPlus = document.querySelector('.js-app .plus');
+        const counterEl = document.querySelectorAll('.js-app .counter');
+        const buttonMinusCounter = document.querySelector('.js-app .minus-counter');
+        const buttonPlusCounter = document.querySelector('.js-app .plus-counter');
+        const buttonMinusStep = document.querySelector('.js-app .minus-step');
+        const buttonPlusStep = document.querySelector('.js-app .plus-step');
         const sumEl = document.querySelector('.js-app .sum');
-        const stepEl = document.querySelector('.js-app .step');
+        const substractEl = document.querySelector('.substract');
+        const multiplyEl = document.querySelector('.multiply');
+        const stepEl = document.querySelectorAll('.js-app .step');
 
         const data = {
             counter: 1,
             step: 2
         };
 
-        const incrementCounterHandler = function () {};
-        const decrementCounterHandler = function () {};
-        //...
-        const getSum = function () {};
+        const incrementCounterHandler = function () {
+            data.counter += 1
+            counterEl.forEach(el => el.textContent = data.counter);
+        };
+        const decrementCounterHandler = function () {
+            data.counter -= 1
+            counterEl.forEach(el => el.textContent = data.counter);
+        };
+        const incrementStepHandler = function () {
+            data.step += 2
+            stepEl.forEach(el => el.textContent = data.step)
+        };
+        const decrementStepHandler = function () {
+            data.step -= 2
+            stepEl.forEach(el => el.textContent = data.step)
+        };
+        const getSum = function () {
+            sumEl.textContent = (data.counter + data.step).toString()
+        };
+        const getSubstract = function () {
+            substractEl.textContent = (data.counter - data.step).toString()
+        };
+        const getMultiply = function () {
+            multiplyEl.textContent = (data.counter * data.step).toString()
+        };
 
-        const queue = [getSum];
+        const queue = [getSum, getSubstract, getMultiply];
 
         Object.keys(data).forEach(key => {
             let value = data[key]; // data.counter, data.counter1, data.counter2
             Object.defineProperty(data, key, {
                 get: function () {
                     console.log('get');
-                    // queue.push();
+                    queue.push();
                     return value;
                 },
                 set: function (newValue) {
@@ -96,11 +162,15 @@
             });
         });
 
-        counterEl.textContent = data.counter;
-        stepEl.textContent = data.step;
+        counterEl.forEach(el => el.textContent = data.counter);
+        stepEl.forEach(el => el.textContent = data.step)
         getSum();
-        buttonElMinus.addEventListener('click', decrementCounterHandler);
-        buttonElPlus.addEventListener('click', incrementCounterHandler);
+        getSubstract();
+        getMultiply();
+        buttonMinusCounter.addEventListener('click', decrementCounterHandler);
+        buttonPlusCounter.addEventListener('click', incrementCounterHandler);
+        buttonMinusStep.addEventListener('click', decrementStepHandler)
+        buttonPlusStep.addEventListener('click', incrementStepHandler)
     </script>
 </body>
 
